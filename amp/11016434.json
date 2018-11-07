@@ -1,5 +1,15 @@
 {
-  "id": "1",
+  "imp": [
+    {
+      "ext": {
+        "appnexus": {
+          "placementId": 11016434
+        }
+      },
+      "banner": {},
+      "id": "11016434"
+    }
+  ],
   "ext": {
     "prebid": {
       "targeting": {
@@ -18,15 +28,5 @@
       }
     }
   },
-  "imp": [
-    {
-      "id": "1",
-      "banner": {},
-      "ext": {
-        "appnexus": {
-          "placementId": 11016434
-        }
-      }
-    }
-  ]
+  "id": "11016434"
 }
