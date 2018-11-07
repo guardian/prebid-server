@@ -27,3 +27,4 @@
 * [amp.md](../docs/endpoints/openrtb2/amp.md)
 * [auction.md](../docs/endpoints/openrtb2/auction.md)
 * [Show Prebid ads on Amp](http://prebid.org/dev-docs/show-prebid-ads-on-amp-pages.html)
+* [OpenRTB 2.5 spec](https://www.iab.com/wp-content/uploads/2016/03/OpenRTB-API-Specification-Version-2-5-FINAL.pdf) - this is the format of saved requests in PBS
