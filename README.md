@@ -2,6 +2,8 @@
 
 # Prebid Server
 
++++++ **For Guardian-specific Amp integration, go to [amp](amp)** +++++
+
 Prebid Server is an open source implementation of Server-Side Header Bidding.
 It is managed by [Prebid.org](http://prebid.org/overview/what-is-prebid-org.html),
 and upholds the principles from the [Prebid Code of Conduct](http://prebid.org/wrapper_code_of_conduct.html).
@@ -28,8 +30,8 @@ Then download and prepare Prebid Server:
 
 ```bash
 cd $GOPATH
-git clone https://github.com/prebid/prebid-server src/github.com/prebid/prebid-server
-cd src/github.com/prebid/prebid-server
+git clone https://github.com/guardian/prebid-server src/github.com/guardian/prebid-server
+cd src/github.com/guardian/prebid-server
 dep ensure
 ```
 
