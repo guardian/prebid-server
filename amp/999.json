@@ -6,7 +6,17 @@
       "banner": {},
       "ext": {
         "appnexus": {
-          "placementId": 11016434
+          "placementId": 999,
+          "keywords": [
+            {
+              "key": "k",
+              "value": [
+                "a",
+                "b",
+                "c"
+              ]
+            }
+          ]
         }
       }
     }
