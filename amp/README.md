@@ -9,6 +9,13 @@
 * Amp runtime is configured in the [frontend](https://github.com/guardian/frontend) repo.
 * The PBS is [here](https://prebid.adnxs.com/).
 
+## Configuration
+These are the current stored requests:
+* [UK and International editions](14351413.json)
+* [US edition](14401433.json)
+* [AU edition](14400184.json)
+* [UK and International editions with an alias for AppNexus](4.json)
+
 ## Testing a stored request
 0. Set up `dev.theguardian.com` as an alias host for `localhost`.
 0. Run frontend locally and ensure the `prebid-amp` switch is on.

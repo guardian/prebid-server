@@ -6,23 +6,19 @@
       "banner": {},
       "ext": {
         "appnexus": {
-          "placementId": 999,
-          "keywords": [
-            {
-              "key": "k",
-              "value": [
-                "a",
-                "b",
-                "c"
-              ]
-            }
-          ]
+          "placementId": 4
+        },
+        "ampan": {
+          "placementId": 14351413
         }
       }
     }
   ],
   "ext": {
     "prebid": {
+      "aliases": {
+        "ampan": "appnexus"
+      },
       "targeting": {
         "pricegranularity": {
           "ranges": [
