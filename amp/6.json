@@ -6,6 +6,9 @@
       "banner": {},
       "ext": {
         "appnexus": {
+          "placementId": 6
+        },
+        "ampan": {
           "placementId": 14351413
         }
       }
@@ -13,6 +16,9 @@
   ],
   "ext": {
     "prebid": {
+      "aliases": {
+        "ampan": "appnexus"
+      },
       "targeting": {
         "pricegranularity": {
           "ranges": [
