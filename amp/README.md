@@ -11,9 +11,9 @@
 
 ## Configuration
 These are the current stored requests:
-* [UK and International editions](4.json)
-* [US edition](7.json)
-* [AU edition](6.json)
+* [UK and rest of world (ROW) ad regions](4.json)
+* [US ad region](7.json)
+* [AU ad region](6.json)
 
 ## Testing a stored request
 0. Set up `dev.theguardian.com` as an alias host for `localhost`.
