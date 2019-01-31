@@ -20,6 +20,7 @@ type BidderName string
 // These names _must_ coincide with the bidder code in Prebid.js, if an adapter also exists in that project.
 // Please keep these (and the BidderMap) alphabetized to minimize merge conflicts among adapter submissions.
 const (
+	Bidder33Across     BidderName = "33across"
 	BidderAdkernelAdn  BidderName = "adkernelAdn"
 	BidderAdtelligent  BidderName = "adtelligent"
 	BidderAdform       BidderName = "adform"
@@ -29,6 +30,8 @@ const (
 	BidderConversant   BidderName = "conversant"
 	BidderEPlanning    BidderName = "eplanning"
 	BidderFacebook     BidderName = "audienceNetwork"
+	BidderGrid         BidderName = "grid"
+	BidderGumGum       BidderName = "gumgum"
 	BidderIx           BidderName = "ix"
 	BidderLifestreet   BidderName = "lifestreet"
 	BidderOpenx        BidderName = "openx"
@@ -38,10 +41,12 @@ const (
 	BidderRubicon      BidderName = "rubicon"
 	BidderSomoaudience BidderName = "somoaudience"
 	BidderSovrn        BidderName = "sovrn"
+	BidderYieldmo      BidderName = "yieldmo"
 )
 
 // BidderMap stores all the valid OpenRTB 2.x Bidders in the project. This map *must not* be mutated.
 var BidderMap = map[string]BidderName{
+	"33across":        Bidder33Across,
 	"adkernelAdn":     BidderAdkernelAdn,
 	"adtelligent":     BidderAdtelligent,
 	"adform":          BidderAdform,
@@ -51,6 +56,8 @@ var BidderMap = map[string]BidderName{
 	"brightroll":      BidderBrightroll,
 	"conversant":      BidderConversant,
 	"eplanning":       BidderEPlanning,
+	"grid":            BidderGrid,
+	"gumgum":          BidderGumGum,
 	"ix":              BidderIx,
 	"lifestreet":      BidderLifestreet,
 	"openx":           BidderOpenx,
@@ -60,6 +67,7 @@ var BidderMap = map[string]BidderName{
 	"rubicon":         BidderRubicon,
 	"somoaudience":    BidderSomoaudience,
 	"sovrn":           BidderSovrn,
+	"yieldmo":         BidderYieldmo,
 }
 
 // BidderList returns the values of the BidderMap
@@ -111,7 +119,7 @@ func NewBidderParamsValidator(schemaDirectory string) (BidderParamValidator, err
 		if err != nil {
 			return nil, fmt.Errorf("Failed to get an absolute representation of the path: %s, %v", toOpen, err)
 		}
-		schemaLoader := gojsonschema.NewReferenceLoader("file:///" + toOpen)
+		schemaLoader := gojsonschema.NewReferenceLoader("file:///" + filepath.ToSlash(toOpen))
 		loadedSchema, err := gojsonschema.NewSchema(schemaLoader)
 		if err != nil {
 			return nil, fmt.Errorf("Failed to load json schema at %s: %v", toOpen, err)

@@ -13,7 +13,7 @@ import (
 	"time"
 
 	"github.com/buger/jsonparser"
-	"github.com/evanphx/json-patch"
+	jsonpatch "github.com/evanphx/json-patch"
 	"github.com/golang/glog"
 	"github.com/julienschmidt/httprouter"
 	"github.com/mssola/user_agent"
@@ -34,13 +34,14 @@ import (
 
 const storedRequestTimeoutMillis = 50
 
-func NewEndpoint(ex exchange.Exchange, validator openrtb_ext.BidderParamValidator, requestsById stored_requests.Fetcher, cfg *config.Configuration, met pbsmetrics.MetricsEngine, pbsAnalytics analytics.PBSAnalyticsModule, disabledBidders map[string]string, defReqJSON []byte) (httprouter.Handle, error) {
+func NewEndpoint(ex exchange.Exchange, validator openrtb_ext.BidderParamValidator, requestsById stored_requests.Fetcher, cfg *config.Configuration, met pbsmetrics.MetricsEngine, pbsAnalytics analytics.PBSAnalyticsModule, disabledBidders map[string]string, defReqJSON []byte, bidderMap map[string]openrtb_ext.BidderName) (httprouter.Handle, error) {
+
 	if ex == nil || validator == nil || requestsById == nil || cfg == nil || met == nil {
 		return nil, errors.New("NewEndpoint requires non-nil arguments.")
 	}
 	defRequest := defReqJSON != nil && len(defReqJSON) > 0
 
-	return httprouter.Handle((&endpointDeps{ex, validator, requestsById, cfg, met, pbsAnalytics, disabledBidders, defRequest, defReqJSON}).Auction), nil
+	return httprouter.Handle((&endpointDeps{ex, validator, requestsById, cfg, met, pbsAnalytics, disabledBidders, defRequest, defReqJSON, bidderMap}).Auction), nil
 }
 
 type endpointDeps struct {
@@ -53,6 +54,7 @@ type endpointDeps struct {
 	disabledBidders  map[string]string
 	defaultRequest   bool
 	defReqJSON       []byte
+	bidderMap        map[string]openrtb_ext.BidderName
 }
 
 func (deps *endpointDeps) Auction(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
@@ -206,6 +208,11 @@ func (deps *endpointDeps) parseRequest(httpRequest *http.Request) (req *openrtb.
 	// Populate any "missing" OpenRTB fields with info from other sources, (e.g. HTTP request headers).
 	deps.setFieldsImplicitly(httpRequest, req)
 
+	if err := processInterstitials(req); err != nil {
+		errs = []error{err}
+		return
+	}
+
 	errL := deps.validateRequest(req)
 	if len(errL) > 0 {
 		errs = append(errs, errL...)
@@ -258,8 +265,13 @@ func (deps *endpointDeps) validateRequest(req *openrtb.BidRequest) []error {
 		}
 	}
 
+	impIDs := make(map[string]int, len(req.Imp))
 	for index := range req.Imp {
 		imp := &req.Imp[index]
+		if firstIndex, ok := impIDs[imp.ID]; ok {
+			errL = append(errL, fmt.Errorf(`request.imp[%d].id and request.imp[%d].id are both "%s". Imp IDs must be unique.`, firstIndex, index, imp.ID))
+		}
+		impIDs[imp.ID] = index
 		errs := deps.validateImp(imp, aliases, index)
 		if len(errs) > 0 {
 			errL = append(errL, errs...)
@@ -275,6 +287,11 @@ func (deps *endpointDeps) validateRequest(req *openrtb.BidRequest) []error {
 	}
 
 	if err := deps.validateSite(req.Site); err != nil {
+		errL = append(errL, err)
+		return errL
+	}
+
+	if err := deps.validateApp(req.App); err != nil {
 		errL = append(errL, err)
 		return errL
 	}
@@ -663,7 +680,7 @@ func (deps *endpointDeps) validateImpExt(imp *openrtb.Imp, aliases map[string]st
 			if tmp, isAlias := aliases[bidder]; isAlias {
 				coreBidder = tmp
 			}
-			if bidderName, isValid := openrtb_ext.BidderMap[coreBidder]; isValid {
+			if bidderName, isValid := deps.bidderMap[coreBidder]; isValid {
 				if err := deps.paramsValidator.Validate(bidderName, ext); err != nil {
 					return []error{fmt.Errorf("request.imp[%d].ext.%s failed validation.\n%v", impIndex, coreBidder, err)}
 				}
@@ -712,7 +729,7 @@ func (deps *endpointDeps) parseBidExt(ext json.RawMessage) (*openrtb_ext.ExtRequ
 
 func (deps *endpointDeps) validateAliases(aliases map[string]string) error {
 	for thisAlias, coreBidder := range aliases {
-		if _, isCoreBidder := openrtb_ext.BidderMap[coreBidder]; !isCoreBidder {
+		if _, isCoreBidder := deps.bidderMap[coreBidder]; !isCoreBidder {
 			return fmt.Errorf("request.ext.prebid.aliases.%s refers to unknown bidder: %s", thisAlias, coreBidder)
 		}
 		if thisAlias == coreBidder {
@@ -733,6 +750,21 @@ func (deps *endpointDeps) validateSite(site *openrtb.Site) error {
 	if len(site.Ext) > 0 {
 		var s openrtb_ext.ExtSite
 		if err := json.Unmarshal(site.Ext, &s); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (deps *endpointDeps) validateApp(app *openrtb.App) error {
+	if app == nil {
+		return nil
+	}
+
+	if len(app.Ext) > 0 {
+		var a openrtb_ext.ExtApp
+		if err := json.Unmarshal(app.Ext, &a); err != nil {
 			return err
 		}
 	}
