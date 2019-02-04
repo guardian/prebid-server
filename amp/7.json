@@ -10,6 +10,10 @@
         },
         "ampan": {
           "placementId": 14401433
+        },
+        "openx": {
+          "unit": "540493117",
+          "delDomain": "guardian-us-d.openx.net"
         }
       }
     }
