@@ -14,6 +14,10 @@
         "ampopenx": {
           "unit": "540493117",
           "delDomain": "guardian-us-d.openx.net"
+        },
+        "amppubmatic": {
+          "publisherId": "157206",
+          "adSlot": "AMP@300x250"
         }
       }
     }
@@ -22,7 +26,8 @@
     "prebid": {
       "aliases": {
         "ampan": "appnexus",
-        "ampopenx": "openx"
+        "ampopenx": "openx",
+        "amppubmatic": "pubmatic"
       },
       "targeting": {
         "pricegranularity": {
