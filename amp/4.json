@@ -11,7 +11,7 @@
         "ampan": {
           "placementId": 14351413
         },
-        "openx": {
+        "ampopenx": {
           "unit": "540493085",
           "delDomain": "guardian-d.openx.net"
         }
@@ -21,7 +21,8 @@
   "ext": {
     "prebid": {
       "aliases": {
-        "ampan": "appnexus"
+        "ampan": "appnexus",
+        "ampopenx": "openx"
       },
       "targeting": {
         "pricegranularity": {
